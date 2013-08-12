@@ -1,0 +1,222 @@
+#!/usr/bin/env php
+<?php
+
+$path = getcwd();
+
+$apiFile = $path.'/api.json';
+
+if ($t = _ARGV('path')) {
+    $path = $t;
+} elseif ($t = _ARGV('p')) {
+    $path = $t;
+}
+
+if ($path{0} != '.' && $path{0} != '/') {
+    $path = getcwd().'/'.$path;
+}
+
+if ($t = _ARGV('j')) {
+    $apiFile = $t;
+} elseif ($t = _ARGV('json')) {
+    $apiFile = $t;
+}
+
+if ($apiFile{0} != '.' && $apiFile{0} != '/') {
+    $apiFile = $path.'/'.$apiFile;
+}
+
+if (_ARGV('h') || _ARGV('help')) {
+    var_dump(_ARGV('h'));
+    echo <<<  EOT
+BeeGThing: illegal option -- -
+usage:  BeeGThing -j|--json=api.json -p|--path=controller
+
+EOT;
+exit;
+}
+
+define('ROOT_PATH', $path);
+
+if (PHP_SAPI != 'cli') {
+    exit('not run in http');
+}
+
+if (!file_exists($apiFile)) {
+    echo <<<  EOT
+BeeGThing: $apiFile not exists
+BeeGThing --help for more information
+
+EOT;
+exit;
+}
+
+$text = file_get_contents($apiFile);
+
+$json = json_decode(preg_replace("%//\s+[^\n]+%", '', $text), true);
+
+foreach ($json['model'] as $key => $value) {
+    $t = explode('<', $key);
+    $t = array_map('trim', $t);
+    if (isset($t[1]) && isset($json['model'][$t[1]])) {
+        $json['model'][$t[0]] = array_merge($value, $json['model'][$t[1]]);
+    }
+}
+foreach ($json['controller'] as $key => $value) {
+    list($method, $url) = explode(' ', $key);
+    $value['method'] = strtolower($method);
+    $url = trim($url, '/');
+    $json['controller'][$url] = $value;
+    unset($json['controller'][$key]);
+}
+
+$json['controller'] = getData($json['controller'], $json['model']);
+
+foreach ($json['controller'] as $key => $value) {
+    $url = $key;
+    if (strpos($url, '/')) {
+        $dir = ROOT_PATH.'/'.dirname($url);
+    } else {
+        $dir = ROOT_PATH;
+    }
+    $file = ROOT_PATH.'/'.$url.'.php';
+
+    $apiPath = str_replace('/', '_', $url);
+
+    if (!file_exists($dir)) {
+        mkdir($dir, 0777, true);
+    }
+
+    $result = array();
+    if (isset($value['response']['result'])) {
+        $result = $value['response']['result'];
+    }
+    $r = varToString($result, "        ");
+    //echo $r;
+    //exit;
+    
+    //$r = var_export($result, true);
+    $c = basename($url).'';
+    $p = '        $request = array();'."\n";
+    foreach ($value['request'] as $k => $v) {
+        $k = ltrim($k, '! ');
+        if ($k == 'session') {
+            continue;
+        }
+        $p .= "        \$request['{$k}'] = _POST('$k');\n";
+    }
+$t =  <<<  EOT
+<?php
+
+class {$c}Controller extends apiController
+{
+    function indexAction()
+    {
+{$p}
+        \$response = $r;
+        // get data
+        \$apiFile = ROOT_PATH.'/api/lib/{$apiPath}.php';
+        
+        if (file_exists(\$apiFile)) {
+            include \$apiFile;
+            \$a = new Api();
+            \$response = \$a->getData(\$request, \$response, \$this);
+        }
+        \$this->outPut(\$response);
+    }
+}
+
+EOT;
+    file_put_contents($file, $t);
+}
+
+function varToString($input, $indent = '') {
+	switch (gettype($input)) {
+		case 'string':
+			return "'" . str_replace(array("\\", "'"), array("\\\\", "\\'"), $input) . "'";
+		case 'array':
+			$output = "array(\n";
+			foreach ($input as $key => $value) {
+				$output .= $indent . "\t" . varToString($key, $indent . "\t") . ' => ' . varToString(
+					$value, $indent . "\t");
+				$output .= ",\n";
+			}
+			$output .= $indent . ')';
+			return $output;
+		case 'boolean':
+			return $input ? 'true' : 'false';
+		case 'NULL':
+			return 'NULL';
+		case 'integer':
+		case 'double':
+		case 'float':
+			return "'" . (string) $input . "'";
+	}
+	return 'NULL';
+}
+
+function getData($data, $model)
+{
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            $newKey = $key;
+            if ($key{0} == '!') {
+                $newKey = trim($key, '! ');
+                unset($data[$key]);
+            }
+            $data[$newKey] = getData($value, $model);
+        }
+    } else {
+        if ($data !== '' && $data{0} == '{') {
+            $k = trim($data, '{} ');
+            if (isset($model[$k])) {
+                return getData($model[$k], $model);
+            }
+            return '';
+        } else {
+            return $data;
+        }
+    }
+
+
+    return $data;
+}
+
+function _ARGV($key = '', $default = '') {
+    if (empty($GLOBALS['argv']) || !is_array($GLOBALS['argv'])) {
+        $GLOBALS['argv'] = array();
+    }
+
+    $result = array();
+    $last_arg = null;
+    foreach ($GLOBALS['argv'] as $val) {
+        $pre = substr($val, 0, 2);
+        if ($pre == '--') {
+            $parts = explode("=", substr($val, 2), 2);
+            if (isset($parts[1])) {
+                $result[$parts[0]] = $parts[1];
+            } else {
+                $result[$parts[0]] = true;
+            }
+        } elseif ($pre{0} == '-') {
+            $string = substr($val, 1);
+            $len = strlen($string);
+            for ($i = 0; $i < $len; $i++) {
+                $k = $string[$i];
+                $result[$k] = true;
+            }
+            $last_arg = $k;
+        } elseif ($last_arg !== null) {
+            $result[$last_arg] = $val;
+            $last_arg = null;
+        }
+    }
+    if (empty($key)) {
+        return $result;
+    }
+
+    if (!isset($result[$key])) {
+        $result[$key] = $default;
+    }
+
+    return $result[$key];
+}

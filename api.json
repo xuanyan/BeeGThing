@@ -1,0 +1,781 @@
+{
+    "title"  : "Project LingJun",
+    "author" : "Geek-Zoo Studio",
+
+    "server" :
+    {
+        "development" : "lingjun.rj-geek.com/api",
+        "test"        : "lingjun.rj-geek.com/api",
+        "production"  : "lingjun.rj-geek.com/api"
+    },
+
+	"enum" :
+	{
+		"ERROR_CODE" :
+		{
+			"OK"           : 0,
+			"UNKNOWN"      : 1
+		},
+		"UID" :
+		{
+			"INVALID"      : 0
+		},
+		"MESSAGE_TYPE" :
+		{
+			"TEXT"         : 0,
+			"VOICE"        : 1,
+			"IMAGE"        : 2
+		}
+	},
+
+    "model" :
+    {
+		// SESSION
+		"SESSION" :
+		{
+			"uid"           : "<UID>",
+			"sid"           : "01234567890ABCDEF"
+		},
+
+		// CLIENT客户端信息
+		"CLIENT" :
+		{
+			"token"           : "ABCDEFG",
+			"client_type"     : "AOS|IOS",
+			"version"         : "0.0.1"
+		},
+
+        // 返回状态
+		"STATUS" :
+		{
+			"succeed"       : false,				// 是否成功
+			"error_code"    : "<ERROR_CODE>",		// 错误代码
+			"error_desc"    : "Invalid session"		// 错误描述
+		},
+
+		// 翻页参数
+		"PAGINATION" :
+		{
+			"by_no"         : 1,					// or 按页码
+			"by_id"         : 1,					// or 按id
+			"count"         : 100					// 每页条数
+		},
+
+		// 翻页结果
+		"PAGINATED" :
+		{
+			"total"         : 100000,			// 总数
+			"count"         : 100,				// 返回条数
+			"more"          : 1					// 是否还有更多
+		},
+
+		// 配置
+		"CONFIG" :
+		{
+			"about_url"     : "",				// 关于URL
+			"treaty_url"    : "",				// 公约URL
+            "push_enabled"  : true,				// PUSH是否打开
+			"flag"          : 1,					// 是否有更新
+			"version"       : "2.0",				// 更新版本号
+			"force"         : 1,					// 是否强制
+			"intro"         : "介绍<br/>介绍<br/>",	// 介绍带换行
+			"url"           : "http://www.qq.com"	// 下载链接
+        },
+
+		// 班级
+		"CLAZZ" :
+		{
+			"! id"       : 3,
+			"name"       : ""
+		},
+
+		// 角色
+		"ROLE" :
+		{
+			"! id"       : 3,
+			"name"       : "",
+			"official"   : true					// 是否官方
+		},
+
+		// 行类
+		"INDUSTRY" :
+		{
+			"! id"       : 3,
+			"name"       : ""
+		},
+
+		// 市
+		"CITY" :
+		{
+			"! id"       : 3,
+			"name"       : ""
+		},
+		
+		// 省
+		"PROVINCE" : {
+			"! id"       : 4,
+			"name"       : "",
+			"city"       : ["{CITY}"]
+		},
+
+		// 活动分类
+		"ACTIVITY_CLASS" : {
+			"! id"       : 4,
+			"name"       : ""
+		},
+
+		// 用户
+		"SIMPLE_MEMBER" :
+		{
+			"! id"            : 3,
+			"company_name"    : "",
+			"position"        : "",
+			"photo"           : "",							// 头像
+			"real_name"       : "",							// 真实姓名
+			"phone"           : ""							// 电话
+		},
+
+		// 课程
+		"SIMPLE_ACTIVITY" :
+		{
+			"! id"            : 3,
+			"name"            : "hello, world",				// 活动名
+      "time"            : "2013-01-01 12:34:56 +0000", // 活动时间
+			"release_time"    : "2013-01-01 12:34:56 +0000",	// 发布时间
+			"address"         : "",								// 活动地点
+      "phone" : "18611163715",
+      "activity_class"  : "{ACTIVITY_CLASS}" // 活动分类
+		},
+
+		// 课程
+		"SIMPLE_LESSON" :
+		{
+			"! id"            : 3,
+			"name"            : "hello, world",
+      "time"            : "2013-01-01 12:34:56 +0000", // 课程时间
+			"lecturer_name"   : "",							// 授课讲师
+			"release_time"    : "2013-01-01 12:34:56 +0000"	// 发布时间
+		},
+
+		// 用户
+		"MEMBER < SIMPLE_MEMBER" :
+		{
+			"email"           : "",
+			"hobby"           : "",
+			"clazz"           : "{CLAZZ}",
+			"company_web"     : "",
+			"company_desc"    : "",
+			"city"            : "{CITY}",
+			"industry"        : "{INDUSTRY}",
+			"sex"			  : "女",
+			"role"			  : "管理员",
+			"product_field"   : "",
+			"core_services"   : "",
+			"core_technol"    : "",
+			"focus_industry"  : "",
+			"focus_activity"  : "",
+			"join_activity"   : "",
+			"company_products":"公司产品XXXXXXXXX",
+			"company_address":"公司地址",
+			"create_time"     : "2013-01-01 12:34:56 +0000"
+		},
+
+		// 用户
+		"SPECIAL_MEMBER" :
+		{
+			"! id"            : 3,
+			"name"            : "hello, world",
+			"introduction"    : "",
+			"tel"             : "",
+			"photo"           : "",
+			"release_time"    : "2013-01-01 12:34:56 +0000"
+		},
+
+		// 活动
+		"ACTIVITY < SIMPLE_ACTIVITY" :
+		{
+			"number"          : "CR12345",						// 活动编号
+			"theme"           : "",								// 活动主题
+			"arrange"         : "",								// 活动安排
+			"contact"         : "13520351350",					// 联系人
+			"following"       : true							// 是否正在关注
+		},
+
+		// 课程
+		"LESSON < SIMPLE_LESSON" :
+		{
+			"address"         : "",							// 授课地点
+			"lecturer_photo"  : "",							// 讲师头像
+			"lecturer_intro"  : "",							// 讲师介绍
+			"preview"         : "",							// 课程大纲
+			"phone"           : "13520351350"				// 班主任电话
+		},
+
+		// 图集
+		"GALLERY" :
+		{
+			"! id"            : 3,
+			"name"            : "",
+			"activity"        : "{SIMPLE_ACTIVITY}",		// 所属活动
+			"member"          : "{SIMPLE_MEMBER}",			// 发布人
+			"num"             : 18,							// 图片数量
+			"photo"          : "{PHOTO}",
+			"time"            : "2013.05.26 ~ 2013.05.30"  // 最后更新时间
+		},
+		"SIGNIN_RESULT":
+		{
+			"member" : "{MEMBER}",
+			"config" : "{CONFIG}"
+		},
+
+	    "PHOTO" :
+	    {
+	      "url" : "",
+	      "name" : "图片标题"
+	    },
+    
+		// 联盟产品
+		"PRODUCT" :
+		{
+			"! id"            : 3,
+			"name"            : "",
+			"price"           : 0.0,
+			"discount_price"  : 0.0,
+			"discount"        : "",
+			"image"           : "",
+			"introduction"    : "",
+			"num"             : 0,
+     		 "phone"           : "18611163715", // 联系电话
+			"commitment"      : "",
+			"member"          : "{SIMPLE_MEMBER}",
+			"release_time"    : "2013-01-01 12:34:56 +0000"	// 发布时间
+		},
+
+		// 家书
+		"CONVERSATION" :
+		{
+			"! id"            : 3,
+			"num"             : 100,
+			"members"         : ["{SIMPLE_MEMBER}"],
+      "is_read"         : 1, // 是否已读
+			"message"         : "{MESSAGE}"
+		},
+
+		// 家书消息
+		"MESSAGE" :
+		{
+			"! id"            : 3,
+			"member"          : "{SIMPLE_MEMBER}",
+			"time"            : "2013-01-01 12:34:56 +0000",
+			"type"            : "<MESSAGE_TYPE>",
+			"text"            : "hello",
+			"voice"           : "url",
+			"image"           : "url"
+		}
+	},
+	
+    "controller" :
+    {
+    	// 获取所有用户
+		"POST /member/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : ["{SIMPLE_MEMBER}"]
+			}
+		},
+
+    	// 获取所有用户组(置顶)
+		"POST /role/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : ["{ROLE}"]
+			}
+		},
+
+    	// 根据用户组获取所有用户(置顶)
+		"POST /role/member" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! role_id"      : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{SPECIAL_MEMBER}"]
+			}
+		},
+
+    	// 用户难
+		"POST /member/signin" :
+		{
+			"request" :
+			{
+				"! username"     : "test",
+				"! password"     : "test",
+				"! client"       : "{CLIENT}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! session"      : "{SESSION}",
+				"result"       : "{SIGNIN_RESULT}"
+			}
+		},
+
+    	// 用户难
+		"POST /member/change_avatar" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! avatar"       : "@FILE"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{MEMBER}"
+			}
+		},
+
+    	// 用户难
+		"POST /member/change_profile" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"email"			 :	"",
+				"phone"			 :	"",
+				"real_name"		 :	"",
+				"introduction"	 :	"",
+				"hobby"			 :	"",
+				"company_name"	 :	"",
+				"company_web"	 :	"",
+				"company_desc"	 :	"",
+				"position"		 :	"",
+				"product_field"	 :	"",
+				"core_services"	 :	"",
+				"core_technol"	 :	"",
+				"focus_industry" :  "",
+				"company_address": ""
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{MEMBER}"
+			}
+		},
+
+    	// 用户难
+		"POST /member/change_password" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! old_password" : "",	// 旧密码
+				"! new_password" : ""	// 新密码
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! session"      : "{SESSION}",
+				"result"       : "{MEMBER}"
+			}
+		},
+
+    	// 用户搜索
+		"POST /member/search" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! keywords"     : "",
+				"industry"       : 1,
+				"city"           : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{SIMPLE_MEMBER}"]
+			}
+		},
+
+    	// 用户资料
+		"POST /member/info" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! member_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : "{MEMBER}"
+			}
+		},
+
+    	// 获取活动
+		"POST /member/activity" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! member_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{SIMPLE_ACTIVITY}"]
+			}
+		},
+
+    	// 获取活动
+		"POST /activity/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{SIMPLE_ACTIVITY}"]
+			}
+		},
+
+    	// 活动详情
+		"POST /activity/info" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! activity_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{ACTIVITY}"
+			}
+		},
+
+    	// 关注活动
+		"POST /activity/follow" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! activity_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}"
+			}
+		},
+
+    	// 取消关注活动
+		"POST /activity/unfollow" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! activity_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}"
+			}
+		},
+
+    	// 获取课程
+		"POST /lesson/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{SIMPLE_LESSON}"]
+			}
+		},
+
+    	// 获取课程
+		"POST /lesson/info" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! lesson_id"    : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{LESSON}"
+			}
+		},
+
+    	// 获取图集
+		"POST /gallery/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{GALLERY}"]
+			}
+		},
+
+    	// 获取图集内容图片
+		"POST /gallery/photos" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! gallery_id"   : 10
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{PHOTO}"]
+			}
+		},
+
+    	// 获取产品
+		"POST /product/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{PRODUCT}"]
+			}
+		},
+
+    	// 搜索产品
+		"POST /product/search" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! keywords"     : "",
+				"industry"       : 1,
+				"city"           : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{PRODUCT}"]
+			}
+		},
+
+    	// 获取行业
+		"POST /industry/list" :
+		{
+			"request" :
+			{
+				"! session" : "{SESSION}"
+			},
+			"response" :
+			{
+				"! status"  : "{STATUS}",
+				"result"    : ["{INDUSTRY}"]
+			}
+		},
+
+    	// 获取城市
+		"POST /citylist" :
+		{
+			"request" :
+			{
+				"! session" : "{SESSION}"
+			},
+			"response" :
+			{
+				"! status"  : "{STATUS}",
+				"result"    : ["{PROVINCE}"]
+			}
+		},
+
+    	// 获取最近的家书
+		"POST /conversation/list" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{CONVERSATION}"]
+			}
+		},
+
+    	// 发送家书对话
+		"POST /conversation/create" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! members"      : [1, 2, 3]
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{CONVERSATION}"
+			}
+		},
+
+    	// 获取家书历史对话
+		"POST /conversation/history" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! conversation_id" : 2
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : ["{MESSAGE}"]
+			}
+		},
+		
+		// 会话长连接订阅
+		"POST /conversation/subscription" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! conversation_id" : 2,
+				"is_first" : 1
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"result"         : "{MESSAGE}"
+			}
+		},
+
+    	// 发送家书对话
+		"POST /conversation/talk" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}",
+				"! pagination"   : "{PAGINATION}",
+				"! message"      : "消息",
+				"! conversation_id" : 2
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! paginated"    : "{PAGINATED}",
+				"result"         : "{MESSAGE}"
+			}
+		},
+
+    	// 获取家书未读
+		"POST /conversation/unread" :
+		{
+			"request" :
+			{
+				"! session"      : "{SESSION}"
+			},
+			"response" :
+			{
+				"! status"       : "{STATUS}",
+				"! result"       : 10
+			}
+		},
+
+		// 获取配置
+		"POST /config/info" :
+		{
+			"request" :
+			{
+				"session"    : "{SESSION}",
+				"client"     : "{CLIENT}"
+			},
+			"response" :
+			{
+				"status"     : "{STATUS}",
+				"result"     : "{CONFIG}"
+			}
+		},
+
+		// 通知开
+		"POST /config/push/on" :
+		{
+			"request" :
+			{
+				"session"    : "{SESSION}",
+				"client"     : "{CLIENT}"
+			},
+			"response" :
+			{
+				"status"     : "{STATUS}",
+				"result"     : "{CONFIG}"
+			}
+		},
+
+		// 通知关
+		"POST /config/push/off" :
+		{
+			"request" :
+			{
+				"session"    : "{SESSION}",
+				"client"     : "{CLIENT}"
+			},
+			"response" :
+			{
+				"status"     : "{STATUS}",
+	      	  	"result"     : "{CONFIG}"
+			}
+		}
+	}
+}
