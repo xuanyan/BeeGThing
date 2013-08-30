@@ -60,6 +60,10 @@ foreach ($json['model'] as $key => $value) {
     if (isset($t[1]) && isset($json['model'][$t[1]])) {
         $json['model'][$t[0]] = array_merge($value, $json['model'][$t[1]]);
     }
+    if ($key{0} == '!') {
+        $key = ltrim($key, '! ');
+        $json['model'][$key] = $value;
+    }
 }
 foreach ($json['controller'] as $key => $value) {
     list($method, $url) = explode(' ', $key);
